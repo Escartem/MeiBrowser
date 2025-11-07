@@ -1,0 +1,63 @@
+﻿<Window x:Class="GUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GUI"
+        mc:Ignorable="d"
+        Loaded="Window_Loaded"
+        Title="MainWindow" Height="450" Width="800">
+
+    <Grid>
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Grid.Row="0" Grid.Column="0" x:Name="DownloadButton" Content="Download selected"
+                Width="150" Height="30" Margin="0,0,10,10"
+                HorizontalAlignment="Center"
+                Click="DownloadButton_Click" />
+                
+                <Button Grid.Row="0" Grid.Column="1" x:Name="ResetButton" Content="Reset"
+                Width="150" Height="30" Margin="10,0,0,10"
+                HorizontalAlignment="Center"
+                Click="ResetButton_Click" />
+            </StackPanel>
+
+            <TreeView Name="FileTree" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding RootItems}">
+                <TreeView.Resources>
+                    <HierarchicalDataTemplate DataType="{x:Type local:FileItem}" ItemsSource="{Binding Children}">
+                        <StackPanel Orientation="Horizontal" Margin="2">
+                            <Image Source="{Binding Icon}" Width="16" Height="16" Margin="0,0,5,0"/>
+                            <TextBlock Text="{Binding Name}" Width="400"/>
+                            <TextBlock Text="{Binding Size}" Width="80" HorizontalAlignment="Right"/>
+                            <TextBlock Text="{Binding Type}" Width="100" HorizontalAlignment="Right"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                </TreeView.Resources>
+            </TreeView>
+        </Grid>
+
+        <Grid x:Name="LoadingOverlay" Background="#80000000" Visibility="Collapsed" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="Loading..." Foreground="White" FontSize="16" HorizontalAlignment="Center"/>
+                <ProgressBar IsIndeterminate="True" Width="200" Height="20"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid x:Name="DownloadingOverlay" Background="#80000000" Visibility="Collapsed" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="Downloading your files..." Foreground="White" FontSize="16" HorizontalAlignment="Center"/>
+                <ProgressBar x:Name="DownloadBar" Width="200" Height="20"/>
+                <TextBlock x:Name="DownloadText" Foreground="White" FontSize="14" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+	<AssemblyName>MeiBrowser</AssemblyName>
+	<Copyright>Copyright (c) 2025 Escartem</Copyright>
+	<Authors>Escartem</Authors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="icons\file.png" />
+    <None Remove="icons\folder.png" />
+    <None Remove="icons\hk4e.png" />
+    <None Remove="icons\hkrpg.png" />
+    <None Remove="icons\nap.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DarkNet" Version="2.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="icons\file.png" />
+    <Resource Include="icons\folder.png" />
+    <Resource Include="icons\hk4e.png" />
+    <Resource Include="icons\hkrpg.png" />
+    <Resource Include="icons\nap.png" />
+  </ItemGroup>
+
+</Project>
