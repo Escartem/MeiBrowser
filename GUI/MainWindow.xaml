@@ -39,6 +39,7 @@
                             <TextBlock Text="{Binding Name}" Width="400"/>
                             <TextBlock Text="{Binding Size}" Width="80" HorizontalAlignment="Right"/>
                             <TextBlock Text="{Binding Type}" Width="100" HorizontalAlignment="Right"/>
+                            <TextBlock Text="{Binding Elements}" Width="100" HorizontalAlignment="Right"/>
                         </StackPanel>
                     </HierarchicalDataTemplate>
                 </TreeView.Resources>

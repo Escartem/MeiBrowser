@@ -43,7 +43,7 @@ namespace GUI
             Console.WriteLine("Hello World !");
 
             RootItems = new ObservableCollection<FileItem> {};
-            RootItem = new FileItem("root", "Folder", 0, "pack://application:,,,/icons/folder.png");
+            RootItem = new FileItem("root", 0);
             DataContext = this;
 
             this.WindowState = WindowState.Maximized;
@@ -60,6 +60,8 @@ namespace GUI
         {
             RootItems.Clear();
             RootItem.Children.Clear();
+            RootItem.SizeInBytes = 0;
+            RootItem.ElementsCount = 0;
             downloadUrl = "";
             toDownload.Clear();
             downloadSize = 0;
@@ -107,6 +109,14 @@ namespace GUI
             {
                 foreach (var root in RootItems)
                     SortTree(root);
+                
+                foreach (var item in RootItem.Children)
+                {
+                    if (item.Type == "Folder")
+                        RootItem.ElementsCount += item.ElementsCount;
+                    else
+                        RootItem.ElementsCount += 1;
+                }
 
                 LoadingOverlay.Visibility = Visibility.Collapsed;
             }
@@ -145,22 +155,17 @@ namespace GUI
                 var existing = currentList.FirstOrDefault(x => x.Name == part);
                 if (existing == null)
                 {
-                    var icon = isFile
-                        ? "pack://application:,,,/icons/file.png"
-                        : "pack://application:,,,/icons/folder.png";
-
-                    existing = new FileItem(part, isFile ? "File" : "Folder", 0, icon, parent, asset);
+                    existing = new FileItem(part, size, parent, asset);
                     currentList.Add(existing);
                 }
-
-                if (isFile)
-                    existing.SizeInBytes = size;
 
                 FileItem? node = existing;
                 node = node.Parent;
                 while (node != null)
                 {
                     node.SizeInBytes += isFile ? size : 0;
+                    if (isFile)
+                        node.ElementsCount += 1;
                     node = node.Parent;
                 }
 
@@ -238,23 +243,24 @@ namespace GUI
     public class FileItem
     {
         public string Name { get; set; }
-        public string Type { get; set; }
+        public string Type => Children.Count == 0 ? "File" : "Folder";
         public ObservableCollection<FileItem> Children { get; set; } = new();
-        public string Icon { get; set; }
         public long SizeInBytes { get; set; }
         public string Size => Utils.FormatSize(SizeInBytes);
+        public string Icon => Type == "File" ? "pack://application:,,,/icons/file.png" : "pack://application:,,,/icons/folder.png";
         public SophonManifestAssetProperty SourceFile { get; set; }
+        public string Elements => ElementsCount == 0 ? "" : $"{ElementsCount.ToString("# ##0")} files";
+        public long ElementsCount { get; set; }
 
         public FileItem? Parent { get; set; }
 
-        public FileItem(string name, string type, long sizeInBytes, string icon, FileItem? parent = null, SophonManifestAssetProperty? sourceFile = null)
+        public FileItem(string name, long sizeInBytes, FileItem? parent = null, SophonManifestAssetProperty? sourceFile = null)
         {
             Name = name;
-            Type = type;
             SizeInBytes = sizeInBytes;
-            Icon = icon;
             Parent = parent;
             SourceFile = sourceFile;
+            ElementsCount = 0;
         }
     }
 }
