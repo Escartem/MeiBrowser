@@ -114,6 +114,7 @@ namespace Core
             {
                 var url = urlBase;
                 if (urlBase.EndsWith("$4"))
+                    Console.WriteLine($"Is multipart zip : true");
                     url = urlBase.Replace("$4", i.ToString("D3"));
 
                 using var req = new HttpRequestMessage(HttpMethod.Head, url);
@@ -123,6 +124,8 @@ namespace Core
 
                 if (!ok)
                     break;
+
+                Console.WriteLine($"Found part {i}");
 
                 var size = res.Content.Headers.ContentLength ?? 0;
 

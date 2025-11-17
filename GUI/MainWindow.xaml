@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:GUI"
         mc:Ignorable="d"
         Loaded="Window_Loaded"
+        Background="#1E1E1E"
         Title="MainWindow" Height="450" Width="800">
 
     <Grid>
@@ -31,7 +32,7 @@
                 Click="ResetButton_Click" />
             </StackPanel>
 
-            <TreeView Name="FileTree" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding RootItems}">
+            <TreeView Background="#2A2A2A" Name="FileTree" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding RootItems}">
                 <TreeView.Resources>
                     <HierarchicalDataTemplate DataType="{x:Type local:FileItem}" ItemsSource="{Binding Children}">
                         <StackPanel Orientation="Horizontal" Margin="2">

@@ -256,7 +256,7 @@ namespace GUI
         public ObservableCollection<FileItem> Children { get; set; } = new();
         public long SizeInBytes { get; set; }
         public string Size => Utils.FormatSize(SizeInBytes);
-        public string Icon => Type == "File" ? "pack://application:,,,/icons/file.png" : "pack://application:,,,/icons/folder.png";
+        public string Icon => Type == "File" ? "pack://application:,,,/icons/file2.png" : "pack://application:,,,/icons/folder.png";
         public SophonManifestAssetProperty SourceFile { get; set; }
         public string Elements => ElementsCount == 0 ? "" : $"{ElementsCount.ToString("# ##0")} files";
         public long ElementsCount { get; set; }

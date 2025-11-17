@@ -7,6 +7,7 @@
         WindowStartupLocation="CenterOwner"
         WindowStyle="ToolWindow" ResizeMode="NoResize"
         mc:Ignorable="d"
+        Background="#1E1E1E"
         Title="StartDialog" Height="420" Width="600">
 
     <Grid>
@@ -61,7 +62,7 @@
                     SelectionChanged="CategoryCombo_SelectionChanged"/>
 
             <Button x:Name="ConfirmButton" IsEnabled="False" Grid.Row="5" Grid.Column="2" Content="Confirm" Height="32" Width="100"
-                HorizontalAlignment="Right" Click="Confirm_Click"/>
+                HorizontalAlignment="Right" Click="Confirm_Click" Background="#2A2A2A"/>
         </Grid>
 
         <Grid x:Name="LoadingOverlay" Background="#80000000" Visibility="Collapsed" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
