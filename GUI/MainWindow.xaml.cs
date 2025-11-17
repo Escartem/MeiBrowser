@@ -35,7 +35,6 @@ namespace GUI
         public MainWindow()
         {
             InitializeComponent();
-            // TODO: add proper dark mode
             DarkNet.Instance.SetWindowThemeWpf(this, Theme.Dark);
 
             ConsoleHelper.AllocConsole();

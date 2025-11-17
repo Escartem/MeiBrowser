@@ -39,7 +39,7 @@ namespace GUI
             ModeCombo.ItemsSource = new[]
             {
                 new ComboBoxItem() { Content = "Sophon" },
-                new ComboBoxItem() { Content = "Dispatch" }
+                new ComboBoxItem() { Content = "Scattered Files" }
             };
 
             this.Title = "Select Game Options";
