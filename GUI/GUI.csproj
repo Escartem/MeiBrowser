@@ -9,6 +9,7 @@
 	<AssemblyName>MeiBrowser</AssemblyName>
 	<Copyright>Copyright (c) 2025 Escartem</Copyright>
 	<Authors>Escartem</Authors>
+	<ApplicationIcon>icons\logo.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +20,10 @@
     <None Remove="icons\hk4e.png" />
     <None Remove="icons\hkrpg.png" />
     <None Remove="icons\nap.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="icons\logo.ico" />
   </ItemGroup>
 
   <ItemGroup>
