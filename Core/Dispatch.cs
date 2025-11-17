@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using static System.Net.WebRequestMethods;
 
 namespace Core
 {
@@ -33,6 +32,14 @@ namespace Core
                         versions.Remove(v); // mihoyo accident in their servers, they're gone :(
                     }
                 }
+
+                if (game == "hkrpg")
+                {
+                    if (v == "1.0")
+                    {
+                        versions.Remove(v); // no update, scatter url not deployed yet, full game zip are down, so nothing left
+                    }
+                }
             }
             versions.Sort();
             versions.Reverse();
@@ -56,6 +63,12 @@ namespace Core
                 packages.Add("ZIP");
             }
 
+            if (Version.Parse(version).CompareTo(Version.Parse("1.0")) > 0)
+            {
+                if ((game == "hk4e" && Version.Parse(version).CompareTo(Version.Parse("1.1")) > 0) || game != "hk4e")
+                    packages.Add("Update");
+            }
+
             return packages;
         }
 
@@ -65,6 +78,12 @@ namespace Core
             {
                 Console.WriteLine("Using ZIP mode");
                 return await GetZIPFiles(game, version);
+            }
+
+            if (mode == "update")
+            {
+                Console.WriteLine("Using Update mode");
+                return await GetUpdateFiles(game, version);
             }
 
             var dispatchJson = (JObject)await GetDispatchData();
@@ -148,6 +167,60 @@ namespace Core
 
             if (urlBase.EndsWith("$4"))
                 urlBase = urlBase[..urlBase.LastIndexOf('/')];
+            return (manifest, urlBase);
+        }
+
+        public static async Task<(SophonManifestProto, string)> GetUpdateFiles(string game, string version)
+        {
+            var dispatchJson = (JObject)await GetDispatchData();
+            // get previous version
+            var props = ((JObject)dispatchJson[game]["updatesHashes"]).Properties().Select(p => p.Name).OrderBy(x => x).ToList();
+            var i = props.IndexOf(version);
+            var previousVersion = i > 0 ? props[i - 1] : null;
+
+            if (((JObject)dispatchJson[game]["updatesHashesSpecial"]).Property(version) != null)
+                previousVersion = (string)dispatchJson[game]["updatesHashesSpecial"][version];
+
+            if (previousVersion.Split(".").Length == 2)
+                previousVersion += ".0";
+
+            Console.WriteLine($"previous version : {previousVersion}");
+
+            // get update url
+            var ver = new Version(version);
+            var key = dispatchJson[game]["urls"]["update"].Children<JProperty>()
+                .Select(p => new Version(p.Name))
+                .Where(v => v <= ver)
+                .Max();
+            var urlBase = dispatchJson[game]["urls"]["update"][key.ToString()]!.ToString();
+
+            urlBase = urlBase.Replace("$0", dispatchJson[game]["updatesHashes"][version]!.ToString());
+            urlBase = urlBase.Replace("$2", previousVersion);
+            urlBase = urlBase.Replace("$3", $"{version}.0");
+            Console.WriteLine($"update url : {urlBase}");
+
+            SophonManifestProto manifest = new SophonManifestProto();
+
+            using var req = new HttpRequestMessage(HttpMethod.Head, urlBase);
+            using var res = await client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead);
+
+            var ok = res.IsSuccessStatusCode;
+
+            if (ok)
+            {
+                var size = res.Content.Headers.ContentLength ?? 0;
+                var filename = urlBase.Split('/').Last();
+
+                var asset = new SophonManifestAssetProperty
+                {
+                    AssetName = filename,
+                    AssetHashMd5 = "", // no hash available
+                    AssetSize = size
+                };
+
+                manifest.Assets.Add(asset);
+            }
+
             return (manifest, urlBase);
         }
     }

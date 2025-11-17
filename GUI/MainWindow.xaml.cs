@@ -191,10 +191,10 @@ namespace GUI
             toDownload.Clear();
             downloadSize = 0;
 
-            if (selected != null)
-            {
-                addFolderToDownloads(selected);
-            }
+            if (selected == null)
+                return;
+
+            addFolderToDownloads(selected);
 
             var result = MessageBox.Show($"You are about to download {Utils.FormatSize(downloadSize)}, continue ?", "Continue?", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.Yes)
