@@ -26,11 +26,6 @@ namespace Core
             var minVersion = Version.Parse((string)dispatchJson[game]["minVersion"]);
             foreach (var v in versions.ToList())
             {
-                if (Version.Parse(v).CompareTo(minVersion) < 0)
-                {
-                    versions.Remove(v);
-                }
-
                 if (game == "hk4e")
                 {
                     if (v == "3.2" || v == "3.4")
@@ -42,6 +37,26 @@ namespace Core
             versions.Sort();
             versions.Reverse();
             return versions;
+        }
+
+        public static async Task<List<string>> GetPackages(string game, string version)
+        {
+            var dispatchJson = await GetDispatchData();
+            var minVersion = Version.Parse((string)dispatchJson[game]["minVersion"]);
+
+            List<string> packages = new();
+
+            if (Version.Parse(version).CompareTo(minVersion) > 0)
+            {
+                packages.Add("Files");
+            }
+
+            if (!(game == "hkrpg" && Version.Parse(version).CompareTo(Version.Parse("2.0")) < 0))
+            {
+                packages.Add("ZIP");
+            }
+
+            return packages;
         }
 
         public static async Task<(SophonManifestProto, string)> GetFiles(string game, string version, string mode)
@@ -105,13 +120,13 @@ namespace Core
                 using var res = await client.SendAsync(req, HttpCompletionOption.ResponseHeadersRead);
 
                 var ok = res.IsSuccessStatusCode;
-                // >.<
+
                 if (!ok)
                     break;
 
                 var size = res.Content.Headers.ContentLength ?? 0;
 
-                if (size == 3)
+                if (size == 3) // hsr can return ">.<" with status 200 which means not found
                     break;
 
                 var filename = url.Split('/').Last();

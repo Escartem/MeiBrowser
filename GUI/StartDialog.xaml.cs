@@ -107,6 +107,8 @@ namespace GUI
                 ServerCombo.IsEnabled = false;
                 ServerCombo.ItemsSource = null;
 
+                VersionCombo.ItemsSource = null;
+
                 LoadingOverlay.Visibility = Visibility.Visible;
                 var versions = await Dispatch.GetDispatchVersions(((dynamic)GameCombo.SelectedItem).Id);
                 LoadingOverlay.Visibility = Visibility.Collapsed;
@@ -155,24 +157,24 @@ namespace GUI
 
             ComboBoxItem[] packageItems = Array.Empty<ComboBoxItem>();
 
+            LoadingOverlay.Visibility = Visibility.Visible;
             if ((string)(ModeCombo.SelectedItem as ComboBoxItem).Content == "Sophon")
             {
-                LoadingOverlay.Visibility = Visibility.Visible;
+                
                 var packages = await Meta.GetPackages((string)(ServerCombo.SelectedItem as ComboBoxItem).Content, (string)VersionCombo.SelectedItem, currentPackageId, currentPassword);
 
                 packageItems = packages.Select(p =>
                     new ComboBoxItem() { Content = $"{p[1]} - {p[2]}", Tag = p[0] }
                 ).ToArray();
-
-                LoadingOverlay.Visibility = Visibility.Collapsed;
             } else
             {
-                packageItems = new[]
-                {
-                    new ComboBoxItem() { Content = "Files", Tag = "files" },
-                    new ComboBoxItem() { Content = "ZIP", Tag = "zip" }
-                };
+                List<string> packages = await Dispatch.GetPackages(((dynamic)GameCombo.SelectedItem).Id, (string)VersionCombo.SelectedItem);
+
+                packageItems = packages.Select(p =>
+                    new ComboBoxItem() { Content = p, Tag = p.ToLower() }
+                ).ToArray();
             }
+            LoadingOverlay.Visibility = Visibility.Collapsed;
 
             CategoryCombo.ItemsSource = packageItems;
             CategoryCombo.IsEnabled = true;
