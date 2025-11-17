@@ -31,4 +31,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: MeiBrowser
-          path: MeiBrowser/GUI/bin/Release/*
+          path: GUI/bin/Release/*

@@ -77,6 +77,7 @@ namespace GUI
             GameCombo.ItemsSource = source;
         }
 
+        #region mode selection
         private void ModeCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             SelectedMode = (string)(ModeCombo.SelectedItem as ComboBoxItem).Content.ToString();
@@ -95,7 +96,14 @@ namespace GUI
 
             ConfirmButton.IsEnabled = false;
         }
+        private void ModeHelpButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Sophon mode is the new method to download files, it is better & faster.\n\nDispatch mode is the old method, while older it provides content such as full game zip, update zip, and files from versions earlier than when sophon was available, consider it the legacy mode.", "Mode Information", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
 
+        #endregion
+
+        #region game selection
         private async void GameCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (GameCombo.SelectedItem == null) return;
@@ -151,6 +159,33 @@ namespace GUI
             ConfirmButton.IsEnabled = false;
         }
 
+        private async void CheckSophonButton_Click(object sender, RoutedEventArgs e)
+        {
+            LoadingOverlay.Visibility = Visibility.Visible;
+
+            try
+            {
+                customSophonUrl = CustomSophonUrl.Text;
+                var version = await Sophon.CheckBuild(customSophonUrl);
+                VersionCombo.ItemsSource = null;
+                VersionCombo.ItemsSource = new[] { version };
+                VersionCombo.IsEnabled = true;
+
+                CategoryCombo.ItemsSource = null;
+                CategoryCombo.IsEnabled = false;
+
+                ConfirmButton.IsEnabled = false;
+            }
+            catch
+            {
+                MessageBox.Show("Failed to fetch sophon build from the provided URL. Make sure it is a /getBuild URL and try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            LoadingOverlay.Visibility = Visibility.Collapsed;
+        }
+        #endregion
+
+        #region server selection
         private async void ServerCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ServerCombo.SelectedItem == null) return;
@@ -175,7 +210,9 @@ namespace GUI
             VersionCombo.ItemsSource = versions;
             VersionCombo.IsEnabled = true;
         }
+        #endregion
 
+        #region version selection
         private async void VersionCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (VersionCombo.SelectedItem == null) return;
@@ -208,12 +245,15 @@ namespace GUI
             CategoryCombo.ItemsSource = packageItems;
             CategoryCombo.IsEnabled = true;
         }
+        #endregion
 
+        #region package selection
         private async void CategoryCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             SelectedCategory = ((dynamic)CategoryCombo.SelectedItem)?.Tag;
             ConfirmButton.IsEnabled = true;
         }
+        #endregion
 
         private void Confirm_Click(object sender, RoutedEventArgs e)
         {
@@ -224,35 +264,6 @@ namespace GUI
                 SelectedServer = customSophonUrl;
             }
             DialogResult = true;
-        }
-
-        private void ModeHelpButton_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Sophon mode is the new method to download files, it is better & faster.\n\nDispatch mode is the old method, while older it provides content such as full game zip, update zip, and files from versions earlier than when sophon was available, consider it the legacy mode.", "Mode Information", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
-        private async void CheckSophonButton_Click(object sender, RoutedEventArgs e)
-        {
-            LoadingOverlay.Visibility = Visibility.Visible;
-
-            try
-            {
-                customSophonUrl = CustomSophonUrl.Text;
-                var version = await Sophon.CheckBuild(customSophonUrl);
-                VersionCombo.ItemsSource = null;
-                VersionCombo.ItemsSource = new[] { version };
-                VersionCombo.IsEnabled = true;
-
-                CategoryCombo.ItemsSource = null;
-                CategoryCombo.IsEnabled = false;
-
-                ConfirmButton.IsEnabled = false;
-            } catch
-            {
-                MessageBox.Show("Failed to fetch sophon build from the provided URL. Make sure it is a /getBuild URL and try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
-            LoadingOverlay.Visibility = Visibility.Collapsed;
         }
     }
 
