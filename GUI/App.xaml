@@ -191,6 +191,16 @@
             <Style TargetType="Popup">
                 <Setter Property="AllowsTransparency" Value="True"/>
             </Style>
+
+
+            <Style TargetType="CheckBox">
+                <Setter Property="Opacity" Value="1"/>
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value="0.4"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

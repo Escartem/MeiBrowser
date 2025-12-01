@@ -23,6 +23,7 @@ namespace GUI
         public string SelectedVersion { get; private set; }
         public string SelectedCategory { get; private set; }
         public string SelectedMode { get; private set; }
+        public string PreviousVersion { get; private set; }
 
         private string customSophonUrl;
 
@@ -43,6 +44,7 @@ namespace GUI
                 new ComboBoxItem() { Content = "Scattered Files" }
             };
 
+            PreviousVersion = null;
             this.Title = "Select Game Options";
         }
 
@@ -94,6 +96,9 @@ namespace GUI
 
             CategoryCombo.IsEnabled = false;
             CategoryCombo.ItemsSource = null;
+
+            DiffMode.IsChecked = false;
+            DiffMode.IsEnabled = false;
 
             ConfirmButton.IsEnabled = false;
         }
@@ -157,6 +162,9 @@ namespace GUI
             CategoryCombo.IsEnabled = false;
             CategoryCombo.ItemsSource = null;
 
+            DiffMode.IsChecked = false;
+            DiffMode.IsEnabled = false;
+
             ConfirmButton.IsEnabled = false;
         }
 
@@ -196,6 +204,8 @@ namespace GUI
             CategoryCombo.IsEnabled = false;
             VersionCombo.ItemsSource = null;
             CategoryCombo.ItemsSource = null;
+            DiffMode.IsChecked = false;
+            DiffMode.IsEnabled = false;
             ConfirmButton.IsEnabled = false;
 
             currentPackageId = null;
@@ -224,6 +234,8 @@ namespace GUI
 
             CategoryCombo.IsEnabled = false;
             CategoryCombo.ItemsSource = null;
+            DiffMode.IsChecked = false;
+            DiffMode.IsEnabled = false;
             ConfirmButton.IsEnabled = false;
 
             ComboBoxItem[] packageItems = Array.Empty<ComboBoxItem>();
@@ -260,6 +272,14 @@ namespace GUI
         private async void CategoryCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             SelectedCategory = ((dynamic)CategoryCombo.SelectedItem)?.Tag;
+            DiffMode.IsChecked = false;
+            DiffMode.IsEnabled = false;
+            
+            if (SelectedMode == "Sophon" && SelectedVersion != VersionCombo.Items[^1])
+            {
+                DiffMode.IsEnabled = true;
+            }
+
             ConfirmButton.IsEnabled = true;
         }
         #endregion
@@ -271,6 +291,10 @@ namespace GUI
             if (SelectedGame == "custom")
             {
                 SelectedServer = customSophonUrl;
+            }
+            if ((bool)DiffMode.IsChecked)
+            {
+                PreviousVersion = (string)VersionCombo.Items[VersionCombo.SelectedIndex + 1];
             }
             DialogResult = true;
         }

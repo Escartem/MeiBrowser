@@ -25,12 +25,13 @@ namespace GUI
         private string region;
         private string categoryId;
         private string mode;
+        private string previousVersion;
         //
         private List<SophonManifestAssetProperty> toDownload = new();
         private long downloadSize = 0;
         private string downloadUrl = "";
 
-        private string appVersion = "1.0";
+        private string appVersion = "1.1";
 
         public MainWindow()
         {
@@ -78,7 +79,8 @@ namespace GUI
                 version = popup.SelectedVersion;
                 categoryId = popup.SelectedCategory;
                 mode = popup.SelectedMode;
-                Console.WriteLine($"Selected: {game}, {region}, {version}, {categoryId} as {mode}");
+                previousVersion = popup.PreviousVersion;
+                Console.WriteLine($"Selected: {game}, {region}, {version}, {categoryId} as {mode} (using prev as {previousVersion})");
                 await UpdateFiles();
             }
         }
@@ -106,7 +108,40 @@ namespace GUI
                 }
                 downloadUrl = buildDownloadUrl;
 
-                foreach (var asset in manifest.Assets)
+                SophonManifestProto diffedManifest = new SophonManifestProto();
+                if (previousVersion != null)
+                {
+                    // TODO: add scattered support
+                    var (prevManifest, prevDownloadUrl) = await Sophon.GetManifest(game, $"{previousVersion}.0", region, categoryId);
+                    var prevMap = new Dictionary<string, string>();
+                    foreach (var asset in prevManifest.Assets)
+                    {
+                        prevMap[asset.AssetName] = asset.AssetHashMd5;
+                    }
+
+                    foreach (var asset in manifest.Assets)
+                    {
+                        if (!prevMap.ContainsKey(asset.AssetName))
+                        {
+                            diffedManifest.Assets.Add(asset);
+                            continue;
+                        }
+
+                        if (prevMap[asset.AssetName] != asset.AssetHashMd5)
+                        {
+                            diffedManifest.Assets.Add(asset);
+                            continue;
+                        }
+                    }
+                } else
+                {
+                    foreach (var asset in manifest.Assets)
+                    {
+                        diffedManifest.Assets.Add(asset);
+                    }
+                }
+
+                foreach (var asset in diffedManifest.Assets)
                     AddFileToRoot(asset);
 
                 
