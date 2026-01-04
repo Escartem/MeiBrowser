@@ -32,6 +32,10 @@ It'll only display files that have changed in the update, so you don't need to d
 
 ![img](https://bin.escartem.moe/2025/12/01/ewPi5QU0ct.png)
 
+## Use custom builds from closed betas (getBuildWithStokenLogin)
+
+![img](https://bin.escartem.moe/2026/01/04/QFvZs7Egqh.png)
+
 ---
 
 ## Feel free to contribute, or star if you like this project :3
