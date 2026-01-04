@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -24,6 +26,7 @@ namespace GUI
         public string SelectedCategory { get; private set; }
         public string SelectedMode { get; private set; }
         public string PreviousVersion { get; private set; }
+        public string STokenBuildData { get; private set; }
 
         private string customSophonUrl;
 
@@ -45,6 +48,7 @@ namespace GUI
             };
 
             PreviousVersion = null;
+            STokenBuildData = "";
             this.Title = "Select Game Options";
         }
 
@@ -52,7 +56,7 @@ namespace GUI
         {
             if (!allowClose)
             {
-                Application.Current.Shutdown();
+                System.Windows.Application.Current.Shutdown();
                 e.Cancel = true;
             }
             base.OnClosing(e);
@@ -104,7 +108,7 @@ namespace GUI
         }
         private void ModeHelpButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Sophon mode is the new method to download files, it is better & faster.\n\nScattered files is the old method, while older it provides content such as full game zip, update zip, and files from versions earlier than when sophon was available, consider it the legacy mode.", "Mode Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            System.Windows.MessageBox.Show("Sophon mode is the new method to download files, it is better & faster.\n\nScattered files is the old method, while older it provides content such as full game zip, update zip, and files from versions earlier than when sophon was available, consider it the legacy mode.", "Mode Information", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         #endregion
@@ -187,7 +191,7 @@ namespace GUI
             }
             catch
             {
-                MessageBox.Show("Failed to fetch sophon build from the provided URL. Make sure it is a /getBuild URL and try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show("Failed to fetch sophon build from the provided URL. Make sure it is a /getBuild URL and try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             LoadingOverlay.Visibility = Visibility.Collapsed;
@@ -284,7 +288,7 @@ namespace GUI
         }
         #endregion
 
-        private void Confirm_Click(object sender, RoutedEventArgs e)
+        private void Confirm_Click(object? sender = null, RoutedEventArgs? e = null)
         {
             allowClose = true;
             SelectedVersion = SelectedMode == "Sophon" ? $"{SelectedVersion}.0" : SelectedVersion;
@@ -297,6 +301,26 @@ namespace GUI
                 PreviousVersion = (string)VersionCombo.Items[VersionCombo.SelectedIndex + 1];
             }
             DialogResult = true;
+        }
+
+        private void STokenButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new OpenFileDialog
+            {
+                Filter = "SToken Build|getBuildWithStokenLogin.json|JSON Files (*.json)|*.json",
+                Multiselect = false
+            };
+
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string json = File.ReadAllText(dlg.FileName);
+                if (json != null)
+                {
+                    STokenBuildData = json;
+                    SelectedMode = "Sophon";
+                    Confirm_Click();
+                }
+            }
         }
     }
 

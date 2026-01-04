@@ -26,6 +26,7 @@ namespace GUI
         private string categoryId;
         private string mode;
         private string previousVersion;
+        private string stokenData;
         //
         private List<SophonManifestAssetProperty> toDownload = new();
         private long downloadSize = 0;
@@ -80,6 +81,7 @@ namespace GUI
                 categoryId = popup.SelectedCategory;
                 mode = popup.SelectedMode;
                 previousVersion = popup.PreviousVersion;
+                stokenData = popup.STokenBuildData;
                 Console.WriteLine($"Selected: {game}, {region}, {version}, {categoryId} as {mode} (using prev as {previousVersion})");
                 await UpdateFiles();
             }
@@ -98,7 +100,7 @@ namespace GUI
 
             try
             {
-                var (manifest, buildDownloadUrl) = mode == "Sophon" ? await Sophon.GetManifest(game, version, region, categoryId) : await Dispatch.GetFiles(game, version, categoryId);
+                var (manifest, buildDownloadUrl) = mode == "Sophon" ? await Sophon.GetManifest(game, version, region, categoryId, stokenData) : await Dispatch.GetFiles(game, version, categoryId);
                 if (manifest.Assets.Count == 0)
                 {
                     LoadingOverlay.Visibility = Visibility.Collapsed;

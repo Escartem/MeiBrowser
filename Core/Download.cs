@@ -155,7 +155,9 @@ namespace Core
                     }
 
                     byte[] res;
-                    try { res = await http.GetByteArrayAsync($"{downloadUrl}/{chunk.ChunkName}"); }
+                    string chunkUrl = downloadUrl;
+                    chunkUrl = chunkUrl.Replace("$0", chunk.ChunkName);
+                    try { res = await http.GetByteArrayAsync(chunkUrl); }
                     catch { Console.WriteLine($"Failed to download chunk"); continue; }
 
                     byte[] decompressed;

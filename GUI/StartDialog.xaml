@@ -76,6 +76,9 @@
             <TextBlock Grid.Row="5" Grid.Column="0" Text="Diff Mode:" VerticalAlignment="Center"/>
             <CheckBox x:Name="DiffMode" IsEnabled="False" Margin="15" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Content="Only show new/changed files from previous version" IsThreeState="False"/>
 
+            <Button x:Name="STokenButton" Grid.Row="6" Grid.Column="0" Content="Custom Build" Height="32" Width="100"
+                HorizontalAlignment="Center" Click="STokenButton_Click"  Background="#2A2A2A"/>
+
             <Button x:Name="ConfirmButton" IsEnabled="False" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Content="Confirm" Height="32" Width="100"
                 HorizontalAlignment="Right" Click="Confirm_Click" Background="#2A2A2A"/>
         </Grid>
