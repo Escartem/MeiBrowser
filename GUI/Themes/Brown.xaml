@@ -1,0 +1,14 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Color x:Key="WindowBackgroundColor">#3E2723</Color>
+    <Color x:Key="WindowForegroundColor">#D7CCC8</Color>
+    
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="{StaticResource WindowBackgroundColor}"/>
+    <SolidColorBrush x:Key="WindowForegroundBrush" Color="{StaticResource WindowForegroundColor}"/>
+    
+    <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#4E342E"/>
+    <SolidColorBrush x:Key="ControlBorderBrush" Color="#6D4C41"/>
+    <SolidColorBrush x:Key="ControlHighlightBrush" Color="#795548"/>
+    <SolidColorBrush x:Key="ControlDisabledBrush" Color="#3E2723"/>
+    <SolidColorBrush x:Key="ControlDisabledForegroundBrush" Color="#8D6E63"/>
+</ResourceDictionary>
