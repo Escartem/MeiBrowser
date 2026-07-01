@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:GUI"
         mc:Ignorable="d"
         Loaded="Window_Loaded"
-        Background="#1E1E1E"
+        Background="{DynamicResource WindowBackgroundBrush}"
         Title="MainWindow" Height="450" Width="800">
 
     <Grid>
@@ -30,9 +30,19 @@
                 Width="150" Height="30" Margin="10,0,0,10"
                 HorizontalAlignment="Center"
                 Click="ResetButton_Click" />
+                
+                <ComboBox Grid.Row="0" Grid.Column="2" x:Name="ThemeSelector" 
+                          Width="150" Height="30" Margin="10,0,0,10"
+                          SelectionChanged="Theme_SelectionChanged"
+                          VerticalContentAlignment="Center">
+                    <ComboBoxItem Content="Dark" IsSelected="True"/>
+                    <ComboBoxItem Content="Light"/>
+                    <ComboBoxItem Content="Brown"/>
+                    <ComboBoxItem Content="Custom..."/>
+                </ComboBox>
             </StackPanel>
 
-            <TreeView Background="#2A2A2A" Name="FileTree" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding RootItems}">
+            <TreeView Background="{DynamicResource ControlBackgroundBrush}" Name="FileTree" Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding RootItems}">
                 <TreeView.Resources>
                     <HierarchicalDataTemplate DataType="{x:Type local:FileItem}" ItemsSource="{Binding Children}">
                         <StackPanel Orientation="Horizontal" Margin="2">

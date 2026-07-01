@@ -7,8 +7,8 @@
         WindowStartupLocation="CenterOwner"
         WindowStyle="ToolWindow" ResizeMode="NoResize"
         mc:Ignorable="d"
-        Background="#1E1E1E"
-        Title="StartDialog" Height="470" Width="600">
+        Background="{DynamicResource WindowBackgroundBrush}"
+        Title="Select Game Options" Height="470" Width="600">
 
     <Grid>
         <Grid Margin="20">
@@ -33,7 +33,7 @@
                 SelectionChanged="ModeCombo_SelectionChanged" />
 
             <Button x:Name="ModeHelpButton" Grid.Row="0" Grid.Column="2" Content="Infos" Height="32" Width="75"
-                HorizontalAlignment="Right" Click="ModeHelpButton_Click"  Background="#2A2A2A"/>
+                HorizontalAlignment="Right" Click="ModeHelpButton_Click" />
 
             <!-- Game -->
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Game:" VerticalAlignment="Center"/>
@@ -56,9 +56,9 @@
 
             <!-- Custom sophon -->
             <TextBlock x:Name="CustomSophonTitle" Visibility="Hidden" Grid.Row="2" Grid.Column="0" Text="URL:" VerticalAlignment="Center"/>
-            <TextBox Visibility="Hidden" x:Name="CustomSophonUrl" Margin="15" Grid.Column="1" Grid.Row="2" Height="30" Background="#2A2A2A" Foreground="White" BorderThickness="1"/>
+            <TextBox Visibility="Hidden" x:Name="CustomSophonUrl" Margin="15" Grid.Column="1" Grid.Row="2" Height="30" Background="{DynamicResource ControlBackgroundBrush}" Foreground="{DynamicResource WindowForegroundBrush}" BorderThickness="1"/>
             <Button Visibility="Hidden" x:Name="CheckSophonButton" Grid.Row="2" Grid.Column="2" Content="Check" Height="32" Width="75"
-                HorizontalAlignment="Right" Click="CheckSophonButton_Click"  Background="#2A2A2A"/>
+                HorizontalAlignment="Right" Click="CheckSophonButton_Click" />
             
             <!-- Version -->
             <TextBlock Grid.Row="3" Grid.Column="0" Text="Version:" VerticalAlignment="Center"/>
@@ -80,12 +80,12 @@
                 HorizontalAlignment="Center" Click="STokenButton_Click"  Background="#2A2A2A"/>
 
             <Button x:Name="ConfirmButton" IsEnabled="False" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Content="Confirm" Height="32" Width="100"
-                HorizontalAlignment="Right" Click="Confirm_Click" Background="#2A2A2A"/>
+                HorizontalAlignment="Right" Click="Confirm_Click" />
         </Grid>
 
         <Grid x:Name="LoadingOverlay" Background="#80000000" Visibility="Collapsed" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Text="Loading..." Foreground="White" FontSize="16" HorizontalAlignment="Center"/>
+                <TextBlock Text="Loading..." Foreground="{DynamicResource WindowForegroundBrush}" FontSize="16" HorizontalAlignment="Center"/>
                 <ProgressBar IsIndeterminate="True" Width="200" Height="20"/>
             </StackPanel>
         </Grid>

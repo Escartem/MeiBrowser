@@ -11,6 +11,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Core;
 using Dark.Net;
+using Microsoft.Win32;
+using System.IO;
 
 namespace GUI
 {
@@ -33,6 +35,7 @@ namespace GUI
         private string downloadUrl = "";
 
         private string appVersion = "1.1";
+        private bool isInitializing = true;
 
         public MainWindow()
         {
@@ -57,6 +60,19 @@ namespace GUI
         #region package selection
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            AppSettings.Load();
+            ApplyTheme(AppSettings.SelectedTheme);
+            
+            for (int i = 0; i < ThemeSelector.Items.Count; i++)
+            {
+                if (ThemeSelector.Items[i] is ComboBoxItem item && item.Content.ToString() == AppSettings.SelectedTheme)
+                {
+                    ThemeSelector.SelectedIndex = i;
+                    break;
+                }
+            }
+            
+            isInitializing = false;
             await ShowPopup();
         }
 
@@ -285,6 +301,105 @@ namespace GUI
             DownloadingOverlay.Visibility = Visibility.Collapsed;
         }
         #endregion
+
+        private void Theme_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (isInitializing) return;
+            
+            if (ThemeSelector.SelectedItem is ComboBoxItem item)
+            {
+                string choice = item.Content.ToString();
+                
+                if (choice == "Custom...")
+                {
+                    var dialog = new OpenFileDialog();
+                    dialog.Filter = "XAML Theme Files (*.xaml)|*.xaml";
+                    if (dialog.ShowDialog() == true)
+                    {
+                        try
+                        {
+                            var customDict = new ResourceDictionary { Source = new Uri(dialog.FileName) };
+                            if (!customDict.Contains("WindowBackgroundColor"))
+                            {
+                                MessageBox.Show("Invalid theme file: Missing 'WindowBackgroundColor'.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                return;
+                            }
+                            
+                            Application.Current.Resources.MergedDictionaries.Clear();
+                            Application.Current.Resources.MergedDictionaries.Add(customDict);
+
+                            if (customDict["WindowBackgroundColor"] is Color bgColor)
+                            {
+                                double luminance = (0.299 * bgColor.R + 0.587 * bgColor.G + 0.114 * bgColor.B) / 255;
+                                DarkNet.Instance.SetWindowThemeWpf(this, luminance > 0.5 ? Theme.Light : Theme.Dark);
+                            }
+                            
+                            AppSettings.SelectedTheme = dialog.FileName;
+                            AppSettings.Save();
+                            return;
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Failed to load theme: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+                
+                ApplyTheme(choice);
+                AppSettings.SelectedTheme = choice;
+                AppSettings.Save();
+            }
+        }
+        
+        private void ApplyTheme(string themeName)
+        {
+            Uri themeUri = null;
+            Theme darkNetTheme = Theme.Dark;
+            
+            if (themeName == "Dark")
+            {
+                themeUri = new Uri("Themes/Dark.xaml", UriKind.Relative);
+                darkNetTheme = Theme.Dark;
+            }
+            else if (themeName == "Light")
+            {
+                themeUri = new Uri("Themes/Light.xaml", UriKind.Relative);
+                darkNetTheme = Theme.Light;
+            }
+            else if (themeName == "Brown")
+            {
+                themeUri = new Uri("Themes/Brown.xaml", UriKind.Relative);
+                darkNetTheme = Theme.Dark;
+            }
+            else if (File.Exists(themeName))
+            {
+                try
+                {
+                    var customDict = new ResourceDictionary { Source = new Uri(themeName) };
+                    Application.Current.Resources.MergedDictionaries.Clear();
+                    Application.Current.Resources.MergedDictionaries.Add(customDict);
+                    if (customDict["WindowBackgroundColor"] is Color bgColor)
+                    {
+                        double luminance = (0.299 * bgColor.R + 0.587 * bgColor.G + 0.114 * bgColor.B) / 255;
+                        DarkNet.Instance.SetWindowThemeWpf(this, luminance > 0.5 ? Theme.Light : Theme.Dark);
+                    }
+                    return;
+                }
+                catch { }
+            }
+            
+            if (themeUri != null)
+            {
+                Application.Current.Resources.MergedDictionaries.Clear();
+                Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = themeUri });
+                DarkNet.Instance.SetWindowThemeWpf(this, darkNetTheme);
+            }
+        }
     }
 
     public class FileItem
@@ -310,4 +425,5 @@ namespace GUI
             ElementsCount = 0;
         }
     }
+
 }
