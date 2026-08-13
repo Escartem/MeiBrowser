@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Core
@@ -65,10 +68,41 @@ namespace Core
             return $"{value:0.##} {unit}";
         }
 
-        public static string GetMd5(byte[] data)
+        public static string GetMd5(byte[] data) => GetMd5(data.AsSpan());
+
+        public static string GetMd5(ReadOnlySpan<byte> data)
         {
-            using var md5 = MD5.Create();
-            return BitConverter.ToString(md5.ComputeHash(data)).Replace("-", "").ToLowerInvariant();
+            Span<byte> hash = stackalloc byte[16];
+            MD5.HashData(data, hash);
+            return Convert.ToHexString(hash).ToLowerInvariant();
+        }
+
+        // better hashing
+        public static async Task<string> GetFileMd5Async(
+            string path,
+            Action<long>? onBytesRead = null,
+            CancellationToken cancellationToken = default)
+        {
+            await using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read,
+                                                bufferSize: 1 << 20, FileOptions.Asynchronous | FileOptions.SequentialScan);
+
+            using var hasher = IncrementalHash.CreateHash(HashAlgorithmName.MD5);
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(4 << 20);
+            try
+            {
+                int read;
+                while ((read = await fs.ReadAsync(buffer.AsMemory(0, buffer.Length), cancellationToken)) > 0)
+                {
+                    hasher.AppendData(buffer, 0, read);
+                    onBytesRead?.Invoke(read);
+                }
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buffer);
+            }
+
+            return Convert.ToHexString(hasher.GetCurrentHash()).ToLowerInvariant();
         }
     }
 }

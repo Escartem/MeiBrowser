@@ -18,6 +18,27 @@
                 <Setter Property="Foreground" Value="{DynamicResource WindowForegroundBrush}"/>
             </Style>
 
+            <Style TargetType="ContextMenu">
+                <Style.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="#1B1B1B"/>
+                    </Style>
+                </Style.Resources>
+                <Setter Property="Background" Value="#F5F5F5"/>
+                <Setter Property="Foreground" Value="#1B1B1B"/>
+                <Setter Property="BorderBrush" Value="#BFBFBF"/>
+                <Setter Property="BorderThickness" Value="1"/>
+            </Style>
+
+            <Style TargetType="MenuItem">
+                <Style.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="#1B1B1B"/>
+                    </Style>
+                </Style.Resources>
+                <Setter Property="Foreground" Value="#1B1B1B"/>
+            </Style>
+
             <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
                 <Setter Property="Template">
                     <Setter.Value>
@@ -303,6 +324,67 @@
                         <Setter Property="Opacity" Value="0.4"/>
                     </Trigger>
                 </Style.Triggers>
+            </Style>
+
+            <!-- progress bar -->
+            <Style TargetType="ProgressBar">
+                <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ProgressBar">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    SnapsToDevicePixels="True">
+                                <Grid ClipToBounds="True">
+                                    <Rectangle x:Name="PART_Track" Fill="Transparent"/>
+                                    <Border x:Name="PART_Indicator" HorizontalAlignment="Left">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="#2E7DD7" Offset="0"/>
+                                                <GradientStop Color="#5CB0FF" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                    </Border>
+                                    <Border x:Name="IndeterminateBand" Visibility="Collapsed">
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <LinearGradientBrush.RelativeTransform>
+                                                    <TranslateTransform x:Name="BandShift" X="-1"/>
+                                                </LinearGradientBrush.RelativeTransform>
+                                                <GradientStop Color="#002E7DD7" Offset="0"/>
+                                                <GradientStop Color="#2E7DD7" Offset="0.35"/>
+                                                <GradientStop Color="#5CB0FF" Offset="0.5"/>
+                                                <GradientStop Color="#2E7DD7" Offset="0.65"/>
+                                                <GradientStop Color="#002E7DD7" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsIndeterminate" Value="True">
+                                    <Setter TargetName="PART_Indicator" Property="Visibility" Value="Collapsed"/>
+                                    <Setter TargetName="IndeterminateBand" Property="Visibility" Value="Visible"/>
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard x:Name="SweepStoryboard">
+                                            <Storyboard RepeatBehavior="Forever">
+                                                <DoubleAnimation Storyboard.TargetName="BandShift"
+                                                                 Storyboard.TargetProperty="X"
+                                                                 From="-1" To="1" Duration="0:0:1.4"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.EnterActions>
+                                    <Trigger.ExitActions>
+                                        <StopStoryboard BeginStoryboardName="SweepStoryboard"/>
+                                    </Trigger.ExitActions>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
             </Style>
         </ResourceDictionary>
     </Application.Resources>

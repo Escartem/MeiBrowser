@@ -1,0 +1,41 @@
+<UserControl x:Class="GUI.Views.ConsoleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Loaded="OnLoaded"
+             Unloaded="OnUnloaded"
+             Background="{DynamicResource WindowBackgroundBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="6,6,6,4">
+            <Button x:Name="ClearButton" Content="Clear" Width="80" Height="26" Click="ClearButton_Click"/>
+            <Button x:Name="CopyButton" Content="Copy all" Width="80" Height="26" Margin="6,0,0,0"
+                    Click="CopyButton_Click"/>
+            <CheckBox x:Name="AutoScroll" Content="Auto-scroll" IsChecked="True"
+                      VerticalAlignment="Center" Margin="12,0,0,0"
+                      Foreground="{DynamicResource WindowForegroundBrush}"/>
+        </StackPanel>
+
+        <TextBox Grid.Row="1" x:Name="Output"
+                 Margin="6,0,6,6"
+                 IsReadOnly="True"
+                 IsReadOnlyCaretVisible="True"
+                 FontFamily="Consolas"
+                 FontSize="12"
+                 TextWrapping="NoWrap"
+                 VerticalScrollBarVisibility="Auto"
+                 HorizontalScrollBarVisibility="Auto"
+                 Background="{DynamicResource ControlBackgroundBrush}"
+                 Foreground="{DynamicResource WindowForegroundBrush}"
+                 CaretBrush="{DynamicResource WindowForegroundBrush}"
+                 BorderBrush="{DynamicResource ControlBorderBrush}"
+                 BorderThickness="1"/>
+    </Grid>
+</UserControl>

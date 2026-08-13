@@ -2,14 +2,21 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-	<AssemblyName>MeiBrowser</AssemblyName>
-	<Copyright>Copyright (c) 2025 Escartem</Copyright>
-	<Authors>Escartem</Authors>
-	<ApplicationIcon>icons\logo.ico</ApplicationIcon>
+	  <AssemblyName>MeiBrowser</AssemblyName>
+	  <Copyright>Copyright (c) 2025-2026 Escartem</Copyright>
+	  <Authors>Escartem</Authors>
+	  <ApplicationIcon>icons\logo.ico</ApplicationIcon>
+    <DebugType>None</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <Version>2.0.0</Version>
+    <FileVersion>2.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,6 +35,8 @@
 
   <ItemGroup>
     <PackageReference Include="DarkNet" Version="2.3.0" />
+    <PackageReference Include="Dirkster.AvalonDock" Version="5.0.0" />
+    <PackageReference Include="Dirkster.AvalonDock.Themes.VS2013" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,155 @@
+<UserControl x:Class="GUI.Views.DownloadView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Background="{DynamicResource WindowBackgroundBrush}">
+
+    <UserControl.Resources>
+        <!-- Thin bar used on each file row -->
+        <Style x:Key="FileRowBar" TargetType="ProgressBar">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Border Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                            <Grid ClipToBounds="True">
+                                <Rectangle x:Name="PART_Track" Fill="Transparent"/>
+                                <Border x:Name="PART_Indicator" HorizontalAlignment="Left"
+                                        Background="{TemplateBinding Foreground}"/>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <!-- Square panel matching the rest of the app's chrome -->
+        <Border Width="560" Height="380" HorizontalAlignment="Center" VerticalAlignment="Center"
+                Background="{DynamicResource WindowBackgroundBrush}"
+                BorderBrush="{DynamicResource ControlBorderBrush}"
+                BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- totals -->
+                <StackPanel Grid.Row="0" Margin="16,14,16,12">
+                    <TextBlock x:Name="HeadingText" Text="Downloading your files" FontSize="14"
+                               FontWeight="SemiBold" Height="20"
+                               TextTrimming="CharacterEllipsis"
+                               Foreground="{DynamicResource WindowForegroundBrush}"/>
+                    <ProgressBar x:Name="DownloadBar" Height="12" Minimum="0" Maximum="100" Margin="0,10,0,0"/>
+                    <Grid Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="DownloadText" Grid.Column="0" FontSize="12" Height="17"
+                                   TextTrimming="CharacterEllipsis"
+                                   Foreground="{DynamicResource WindowForegroundBrush}"/>
+                        <TextBlock x:Name="DownloadDetail" Grid.Column="1" FontSize="12" Height="17" Margin="12,0,0,0"
+                                   TextTrimming="CharacterEllipsis"
+                                   Foreground="{DynamicResource ControlDisabledForegroundBrush}"/>
+                    </Grid>
+
+                    <!-- Network and disk -->
+                    <Grid Margin="0,12,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <Grid>
+                                <TextBlock Text="Network" FontSize="11" HorizontalAlignment="Left"
+                                           Foreground="{DynamicResource ControlDisabledForegroundBrush}"/>
+                                <TextBlock x:Name="NetworkRateText" FontSize="11" HorizontalAlignment="Right"
+                                           Foreground="#5CB0FF"/>
+                            </Grid>
+                            <Border Height="20" Margin="0,3,0,0" SnapsToDevicePixels="True"
+                                    Background="{DynamicResource ControlBackgroundBrush}"
+                                    BorderBrush="{DynamicResource ControlBorderBrush}" BorderThickness="1">
+                                <Canvas x:Name="NetworkCanvas" ClipToBounds="True">
+                                    <Polyline x:Name="NetworkLine" Stroke="#5CB0FF" StrokeThickness="1.2"
+                                              StrokeLineJoin="Round"/>
+                                </Canvas>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <Grid>
+                                <TextBlock Text="Disk" FontSize="11" HorizontalAlignment="Left"
+                                           Foreground="{DynamicResource ControlDisabledForegroundBrush}"/>
+                                <TextBlock x:Name="DiskRateText" FontSize="11" HorizontalAlignment="Right"
+                                           Foreground="#C08AFF"/>
+                            </Grid>
+                            <Border Height="20" Margin="0,3,0,0" SnapsToDevicePixels="True"
+                                    Background="{DynamicResource ControlBackgroundBrush}"
+                                    BorderBrush="{DynamicResource ControlBorderBrush}" BorderThickness="1">
+                                <Canvas x:Name="DiskCanvas" ClipToBounds="True">
+                                    <Polyline x:Name="DiskLine" Stroke="#C08AFF" StrokeThickness="1.2"
+                                              StrokeLineJoin="Round"/>
+                                </Canvas>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+
+                <Border Grid.Row="1" Height="1" Background="{DynamicResource ControlBorderBrush}"/>
+
+                <!-- one row per file currently in flight, refreshed from the downloader's snapshots -->
+                <Grid Grid.Row="2">
+                    <TextBlock x:Name="ActiveFilesEmpty" Text="Preparing..." FontSize="12"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Foreground="{DynamicResource ControlDisabledForegroundBrush}"/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,6">
+                        <ItemsControl ItemsSource="{Binding ActiveDownloads}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="16,4" Height="24">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Name}" FontSize="12"
+                                                   Foreground="{DynamicResource WindowForegroundBrush}"
+                                                   TextTrimming="CharacterEllipsis" ToolTip="{Binding Key}"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Status}" FontSize="12"
+                                                   Margin="12,0,0,0" Foreground="{Binding StatusBrush}"/>
+
+                                        <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Height="3"
+                                                     Style="{StaticResource FileRowBar}"
+                                                     Minimum="0" Maximum="100" Value="{Binding Percent, Mode=OneWay}"
+                                                     Background="{DynamicResource ControlBackgroundBrush}"
+                                                     BorderThickness="0"
+                                                     Foreground="{Binding StatusBrush}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+
+                <Border Grid.Row="3" Height="1" Background="{DynamicResource ControlBorderBrush}"/>
+
+                <Button x:Name="CancelDownloadButton" Grid.Row="4" Content="Cancel"
+                        Width="110" Height="28" Margin="0,10,0,12" HorizontalAlignment="Center"
+                        Click="CancelDownloadButton_Click"/>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
