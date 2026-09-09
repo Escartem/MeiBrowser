@@ -21,23 +21,46 @@
             <Style TargetType="ContextMenu">
                 <Style.Resources>
                     <Style TargetType="TextBlock">
-                        <Setter Property="Foreground" Value="#1B1B1B"/>
+                        <Setter Property="Foreground" Value="{DynamicResource WindowForegroundBrush}"/>
                     </Style>
                 </Style.Resources>
-                <Setter Property="Background" Value="#F5F5F5"/>
-                <Setter Property="Foreground" Value="#1B1B1B"/>
-                <Setter Property="BorderBrush" Value="#BFBFBF"/>
+                <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource WindowForegroundBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}"/>
                 <Setter Property="BorderThickness" Value="1"/>
             </Style>
 
             <Style TargetType="MenuItem">
                 <Style.Resources>
                     <Style TargetType="TextBlock">
-                        <Setter Property="Foreground" Value="#1B1B1B"/>
+                        <Setter Property="Foreground" Value="{DynamicResource WindowForegroundBrush}"/>
                     </Style>
                 </Style.Resources>
-                <Setter Property="Foreground" Value="#1B1B1B"/>
+                <Setter Property="Foreground" Value="{DynamicResource WindowForegroundBrush}"/>
             </Style>
+
+            <ControlTemplate x:Key="DockContextMenuItemTemplate" TargetType="MenuItem">
+                <Border x:Name="Root"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Padding="{TemplateBinding Padding}">
+                    <ContentPresenter ContentSource="Header"
+                                      ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                      ContentStringFormat="{TemplateBinding HeaderStringFormat}"
+                                      RecognizesAccessKey="True"
+                                      VerticalAlignment="Center"/>
+                </Border>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsHighlighted" Value="True">
+                        <Setter TargetName="Root" Property="Background" Value="{DynamicResource ControlHighlightBrush}"/>
+                        <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}"/>
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Foreground" Value="{DynamicResource ControlDisabledForegroundBrush}"/>
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
 
             <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
                 <Setter Property="Template">

@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using AvalonDock;
 using AvalonDock.Themes;
@@ -75,14 +76,63 @@ namespace GUI
             Set(dock, Keys.PreviewBoxBackgroundBrushKey, Transparentize(highlight, 0.35));
             Set(dock, Keys.PreviewBoxBorderBrushKey, foreground);
 
+            ApplyContextMenus(dock, control, foreground, border);
             dock.Background = new SolidColorBrush(background);
+        }
+
+        private static void ApplyContextMenus(DockingManager dock, Color background, Color foreground, Color border)
+        {
+            if (Application.Current.TryFindResource("DockContextMenuItemTemplate") is not ControlTemplate itemTemplate)
+                return;
+
+            foreach (string resourceKey in new[]
+            {
+                "AvalonDockThemeVs2013DocumentContextMenu",
+                "AvalonDockThemeVs2013AnchorableContextMenu"
+            })
+            {
+                if (dock.TryFindResource(resourceKey) is not ContextMenu menu)
+                    continue;
+
+                menu.Background = Brush(background);
+                menu.Foreground = Brush(foreground);
+                menu.BorderBrush = Brush(border);
+                menu.BorderThickness = new Thickness(1);
+                menu.Padding = new Thickness(0);
+
+                ApplyMenuItems(menu.Items, itemTemplate, background, foreground, border);
+            }
+        }
+
+        private static void ApplyMenuItems(ItemCollection items, ControlTemplate itemTemplate,
+            Color background, Color foreground, Color border)
+        {
+            foreach (object entry in items)
+            {
+                if (entry is not MenuItem item)
+                    continue;
+
+                item.Template = itemTemplate;
+                item.Background = Brush(background);
+                item.Foreground = Brush(foreground);
+                item.BorderBrush = Brush(border);
+                item.BorderThickness = new Thickness(0);
+                item.Padding = new Thickness(8, 4, 8, 4);
+
+                ApplyMenuItems(item.Items, itemTemplate, background, foreground, border);
+            }
         }
 
         private static void Set(DockingManager dock, object key, Color colour)
         {
+            dock.Resources[key] = Brush(colour);
+        }
+
+        private static SolidColorBrush Brush(Color colour)
+        {
             var brush = new SolidColorBrush(colour);
             brush.Freeze();
-            dock.Resources[key] = brush;
+            return brush;
         }
 
         private static Color Resolve(string brushKey, string? colourKey, Color fallback)
